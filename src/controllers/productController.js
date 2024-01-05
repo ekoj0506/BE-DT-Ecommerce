@@ -2,9 +2,11 @@ import { StatusCodes} from 'http-status-codes';
 import { productService } from '../services/productService';
 import ApiError from '../utils/ApiError';
 import { cloud } from '../services/cloudinaryService';
+
 const create =async (req, res, next)=>{
     try {
        console.log('eeeeee',req.files)
+       console.log('payman',req.body)
        const price=req.body.price-req.body.price/100*req.body.sale|0
         const idImageProduct= await cloud(req.files);
         const dataProduct={

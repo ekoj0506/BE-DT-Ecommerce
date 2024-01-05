@@ -4,11 +4,15 @@ const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const Router = express.Router();
 
-Router.route('/')
+
+Router.route('/detail')
+.get(productController.getProduct)
+
+Router.route('/products')
 .get(productController.getProducts)
-.post(upload.single('imageProduct'),productController.create)
+.post(upload.array('image',12),productController.create)
 Router.route('/:id')
-.get()
+.get(productController.getProduct)
 .post()
 
 

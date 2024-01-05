@@ -3,21 +3,23 @@ import express from 'express'
 import {CONNECT_DB, GET_DB } from '../src/config/mongodb'
 import { env } from './config/environment'
 import { APIs_V1 } from './routes/v1'
-import { cloud } from './services/cloudinaryService'
+import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
+const cors = require('cors');
 const app = express()
 
 const START_SERVER =()=>
 {
-
-
-const hostname = 'localhost'
-const port = 8017
-app.use(express.json())
+  app.use(cors({  maxBodySize: '50mb' }));
+app.use(express.json({ limit: '50mb' }))
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+});
 app.use('/v1', 
   APIs_V1)
-app.get('/', (req, res)=>{
-    res.status(200).json({mes: '222'})
-})
+  app.use(errorHandlingMiddleware)
 app.listen(env.APP_PORT, env.APP_HOST, () => {
   // eslint-disable-next-line no-console
   console.log(`I am running at http://${ env.APP_HOST }:${ env.APP_PORT }/`)

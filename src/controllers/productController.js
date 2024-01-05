@@ -2,13 +2,27 @@ import { StatusCodes} from 'http-status-codes';
 import { productService } from '../services/productService';
 import ApiError from '../utils/ApiError';
 import { cloud } from '../services/cloudinaryService';
-const create =async (req, res)=>{
+const create =async (req, res, next)=>{
     try {
-       console.log(req.file)
-        const idImageProduct= await cloud(req.file.path);
+       console.log('eeeeee',req.files)
+       const price=req.body.price-req.body.price/100*req.body.sale|0
+        const idImageProduct= await cloud(req.files);
         const dataProduct={
-            ...req.body,
-            images: idImageProduct.asset_id,
+            image: idImageProduct,
+            ratings:{
+                count:0,
+                 value: 0
+            },
+            title: req.body.title,
+            price: req.body.price,
+            originalPrice: price,
+            categoryName: req.body.categoryName,
+            outOfStock:false,
+   
+            //categoryId: Joi.objectId().default(null),
+            //description: Joi.string().required().min(5).max(5000).trim().strict().default('mo ta cccc à'),
+            numofpus: req.body.numofpus,
+            brand:     req.body.brand,
         }
         console.log('dddddddddddddddddddddddddddddddddddddd',idImageProduct)
                const returnProductService=await productService.create(dataProduct)
@@ -18,7 +32,7 @@ const create =async (req, res)=>{
     {   
      
 
-        res.status(400).json(error)
+        next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,Error(error).message))
     }
 
 
@@ -32,7 +46,21 @@ const getProducts =async (req, res)=>{
     }
     catch (error)
     {   
-        console.log(error)
+        res.status(400).json(error)
+
+
+}
+}
+const getProduct =async (req, res)=>{
+    try 
+    {   
+        const idProduct=req.params.id
+       const products =await productService.getDetail(idProduct)
+
+       res.status(StatusCodes.OK).json(products)
+    }
+    catch (error)
+    {   
         res.status(400).json(error)
 
 
@@ -41,7 +69,9 @@ const getProducts =async (req, res)=>{
 export const productController =
 {
     create,
-    getProducts
+    getProducts,
+    getProduct
+    
 
 }
 

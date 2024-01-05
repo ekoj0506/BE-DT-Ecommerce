@@ -1,15 +1,15 @@
 import express from 'express';
 
-import {
-	StatusCodes,
-} from 'http-status-codes';
+import {StatusCodes,} from 'http-status-codes';
 import { userValidation } from '../../validations/userValidation';
-import { userService } from '../../services/userService';
+import { userController } from '~/controllers/userController';
 const Router= express.Router();
 
 Router.route('/')
-.get((req,res)=>{
-    res.status(StatusCodes.OK).json({message: 'oke'})
-})
-.post(userValidation.login, userService.login )
+.post(userController.create )
+Router.route(('/signin'))
+.post(userController.signIn)
 export const userRoute=Router
+Router.route('/address')
+.post()
+.get()

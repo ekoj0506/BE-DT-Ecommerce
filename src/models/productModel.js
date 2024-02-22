@@ -20,7 +20,9 @@ const PRODUCT_COLLECTION_SCHEMA= Joi.object(
             value: Joi.number().required().default(0),
             count: Joi.number().required().default(0),
         }),
+        review: Joi.array().default([]),
         brand: Joi.string().required().min(0).strict(),
+        description:Joi.string().required().min(0).strict(),
     
     }
 )
@@ -31,6 +33,23 @@ const create =async (data)=>
       const dataProductCreate = await PRODUCT_COLLECTION_SCHEMA.validateAsync(data, {abortEarly: false})
        console.log(dataProductCreate)
        const result = await GET_DB().collection(PRODUCT_COLLECTION_NAME).insertOne(dataProductCreate)
+      const dataProduct = await GET_DB().collection(PRODUCT_COLLECTION_NAME).findOne({_id: result.insertedId})
+       console.log(result)
+       return dataProduct
+    }
+    catch (error)
+    {
+        console.log(error)
+         throw new Error(error)
+    }
+}
+const edit =async (data, id)=>
+{
+    try{
+    
+      const dataProductCreate = await PRODUCT_COLLECTION_SCHEMA.validateAsync(data, {abortEarly: false})
+       console.log(dataProductCreate)
+       const result = await GET_DB().collection(PRODUCT_COLLECTION_NAME).updateOne({_id: new ObjectId(id)},{$set:dataProductCreate})
       const dataProduct = await GET_DB().collection(PRODUCT_COLLECTION_NAME).findOne({_id: result.insertedId})
        console.log(result)
        return dataProduct
@@ -71,11 +90,25 @@ const getDetail =async (idProduct)=>
          throw new Error(error)
     }
 }
+const deleteProduct =async (id)=>
+{
+    try{
+    
+       const result = await GET_DB().collection(PRODUCT_COLLECTION_NAME).deleteOne({_id: new ObjectId(id)})
+       console.log(result)
+       return result
+    }
+    catch (error)
+    {
+        console.log(error)
+         throw new Error(error)
+    }
+}
 export const productModel = {
     PRODUCT_COLLECTION_NAME,
     PRODUCT_COLLECTION_SCHEMA,
     create,
     get, 
-    getDetail
+    getDetail, edit, deleteProduct
 
 }

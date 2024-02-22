@@ -13,7 +13,6 @@ Router.route('/products')
 .post(upload.array('image',12),productController.create)
 Router.route('/:id')
 .get(productController.getProduct)
-.post()
-
-
+.post(upload.array('image',12),productController.edit)
+.delete(productController.deleteProduct)
 export const productRoute =Router

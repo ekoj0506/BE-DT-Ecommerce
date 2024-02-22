@@ -20,9 +20,9 @@ app.use((req, res, next) => {
 app.use('/v1', 
   APIs_V1)
   app.use(errorHandlingMiddleware)
-app.listen(env.APP_PORT, env.APP_HOST, () => {
+app.listen(env.APP_PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`I am running at http://${ env.APP_HOST }:${ env.APP_PORT }/`)
+  console.log(`I am running at http://localhost:${ env.APP_PORT }/`)
 })
 
 }

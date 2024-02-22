@@ -1,12 +1,14 @@
 import { StatusCodes} from 'http-status-codes';
+import { auth } from '~/middlewares/auth';
+import { userModel } from '~/models/userModel';
 import { userService } from '~/services/userService';
 import ApiError from '~/utils/ApiError';
 const signIn= async (req,res,next)=>{
      try
      {
         const data={
-            username: req.body.username,
-            passwork: req.body.password
+            email: req.body.username,
+            password: req.body.password
         }
         console.log(data)
         const result =await userService.signIn(data)
@@ -22,15 +24,24 @@ const signIn= async (req,res,next)=>{
 const create =async (req, res, next)=>
 {   
     try 
-    {
+    {    
         const dataUser =
         {
             ...req.body,
-            
+            address:[],
         }
-        const userServiceReturn =await userService.create(dataUser)
-        console.log(userServiceReturn)
-        res.status(StatusCodes.OK).json(userServiceReturn)
+        const result =await userService.create(dataUser)
+
+        const initUser={
+            id: result._id,
+            firstName: result.firstName,
+            lastName: result.lastName,
+            email: result.email,
+           }
+           const token=auth.createToken(initUser)
+           initUser.token=token
+    console.log('init',initUser)
+        res.status(201).json(initUser)
 
     }
     catch(error)
@@ -38,9 +49,26 @@ const create =async (req, res, next)=>
 }
 
 }
+const get= async (req,res,next)=>{
+    try
+    {
+      
+    console.log('222')
+       const result =await userModel.getall()
+       console.log(result)
+       res.status(StatusCodes.OK).json(result)
+    }
+    catch(error)
+    {
+       next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,Error(error).message))
+    }
+    
+}
 export const userController = {
 
     create,
-    signIn
+    signIn,
+    get,
+
 
 }

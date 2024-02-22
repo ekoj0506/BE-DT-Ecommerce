@@ -13,6 +13,18 @@ const create = async(dataProduct)=>
     }
 
 }
+const edit = async(dataProduct, idProduct)=>
+{
+    try {
+      const productModelReturn = await productModel.edit(dataProduct,idProduct)
+       return productModelReturn
+    }
+    catch(error)
+    {   
+       throw new ApiError(400, 'loi cc')
+    }
+
+}
 const get = async()=>
 {
     try {
@@ -42,5 +54,6 @@ export const productService =
 {
     create,
     get,
-    getDetail
+    getDetail,
+    edit
 }

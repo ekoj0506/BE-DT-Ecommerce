@@ -21,7 +21,7 @@ const getAddress=async (req,res,next)=>{
 const createAddress=async (req,res,next)=>{
     try 
     {
-
+     console.log(req.body.address)
       const data=req.body.address
       const address =await addressModel.create(data, req.body.idUser)
 

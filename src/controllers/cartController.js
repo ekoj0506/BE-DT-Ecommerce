@@ -2,6 +2,7 @@ import { StatusCodes} from 'http-status-codes';
 import ApiError from '../utils/ApiError';
 import { categoryService } from '~/services/categoryService';
 import { cartService } from '~/services/cartServide';
+import { cartModel } from '~/models/cartModel';
 
 const getCart=async (req,res,next)=>{
     try 
@@ -49,8 +50,43 @@ const updateCart=async (req,res,next)=>{
 }
 
 }
+const removeCart=async (req,res,next)=>{
+  try 
+  {  
+    console.log('dsds')
+    const data=req.params.idProduct
+    const idUser=req.body.idUser
+    const returnUpdate = await cartModel.deleteProduct(data,idUser)
+    res.status(201).json(returnUpdate)
+
+  }
+  catch (error)
+  {   console.log('k loi nha')
+      next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,Error(error).message))
+
+}
+
+}
+const changeCart=async (req,res,next)=>{
+  try 
+  {  
+    const data=req.params.idProduct
+    const idUser=req.body.idUser
+    const typeChange=req.body.action.type
+    const returnUpdate = await cartModel.changeCart(data,idUser,typeChange)
+    res.status(201).json(returnUpdate)
+
+  }
+  catch (error)
+  {   console.log('k loi nha')
+      next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY,Error(error).message))
+
+}
+
+}
 export const cartController ={
     getCart,
-    updateCart
+    updateCart,
+    removeCart,changeCart
 
 }

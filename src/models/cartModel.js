@@ -48,8 +48,67 @@ const update = async (data, idUser)=>
    }
 
 }
+const deleteProduct = async (data, idUser)=>
+{
+   try{
+
+
+    const result = await GET_DB().collection(CART_COLLECTION_NAME).findOne({idUser:idUser})
+      let indexToDelete = result.cart.findIndex(obj => obj._id === data);
+          result.cart.splice(indexToDelete,1)
+          console.log(data,'fdsfd', idUser,'dsfdsf',result.cart,'đsdsd',indexToDelete)
+      const newCart = await GET_DB().collection(CART_COLLECTION_NAME).updateOne({idUser:idUser},{$set:{cart:result.cart}})
+      const cart=await GET_DB().collection(CART_COLLECTION_NAME).findOne({idUser:idUser})
+      return cart
+    
+}
+   
+   catch( error)
+   { console.log('hellooo')
+    throw new ApiError(401,'loi cart')
+   }
+
+}
+
+
+const changeCart = async (data, idUser, typeChange)=>
+{
+   try{
+
+
+    const result = await GET_DB().collection(CART_COLLECTION_NAME).findOne({idUser:idUser})
+      let indexToDelete = result.cart.findIndex(obj => obj._id === data);
+      let newArray = result.cart.map(obj => {
+        if (obj._id === data) {
+          // Tìm thấy object có ID tương ứng, thay đổi giá trị của thuộc tính cụ thể
+          if((typeChange==="decrement"))
+          {
+          if(obj.qty>1)
+          return { ...obj, qty: obj.qty-1 } 
+        return null}
+        return{ ...obj, qty: obj.qty+1 }
+        }
+        return obj;
+      });
+      let newArray2 = newArray.filter(obj => obj !== null && obj !== undefined);
+
+          console.log(data,'fdsfd', idUser,'dsfdsf',newArray,'đsdsd',indexToDelete)
+      const newCart = await GET_DB().collection(CART_COLLECTION_NAME).updateOne({idUser:idUser},{$set:{cart:newArray2}})
+      const cart=await GET_DB().collection(CART_COLLECTION_NAME).findOne({idUser:idUser})
+      return cart
+    
+}
+   
+   catch( error)
+   { console.log('hellooo')
+    throw new ApiError(401,'loi cart')
+   }
+
+}
 export const cartModel = {
     CART_COLLECTION_NAME,
     update,
-    get
+    get,
+    deleteProduct,changeCart
+
 }

@@ -20,9 +20,9 @@ const signIn = async (dataUser) =>
        const result=await userModel.get(dataUser)
        const initUser={
         id: result._id,
-        username: result.username,
-        fullName: result.fullName,
-        phone: result.phone,
+        firstname: result.firstname,
+        lastName: result.lastame,
+        email: result.email,
        }
        const token=auth.createToken(initUser)
        initUser.token=token
